@@ -1,7 +1,7 @@
 {
   "template": "git@github.com:eshiji/cookiecutter-templates.git",
-  "commit": "60979b762eadd348719e6ba606925c76da9e696d",
-  "checkout": "add_go_cli_template",
+  "commit": "2fc7d92c3cd7cb4675b1f383394d81e9e8da9413",
+  "checkout": "main",
   "context": {
     "cookiecutter": {
       "cli_name": "nana",
@@ -20,7 +20,7 @@
         "go.sum"
       ],
       "_template": "git@github.com:eshiji/cookiecutter-templates.git",
-      "_commit": "60979b762eadd348719e6ba606925c76da9e696d"
+      "_commit": "2fc7d92c3cd7cb4675b1f383394d81e9e8da9413"
     }
   },
   "directory": "go_cli",

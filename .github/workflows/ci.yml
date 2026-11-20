@@ -24,8 +24,10 @@ jobs:
       - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
         with:
           go-version-file: go.mod
-      - run: make test
-      - run: make cover
+      - name: Run tests with the race detector
+        run: make test
+      - name: Enforce the coverage minimum
+        run: make cover
 
   lint:
     name: Lint
@@ -43,8 +45,8 @@ jobs:
           # renovate: datasource=github-releases depName=golangci/golangci-lint
           version: v2.15.0
 
-  checks:
-    name: Docs and vulnerabilities
+  docs:
+    name: CLI reference is current
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -54,8 +56,22 @@ jobs:
       - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
         with:
           go-version-file: go.mod
-      - run: make docs-check
-      - run: make vuln
+      - name: Check docs/cli matches the commands
+        run: make docs-check
+
+  vuln:
+    name: Known vulnerabilities
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+        with:
+          go-version-file: go.mod
+      - name: Run govulncheck
+        run: make vuln
 
   workflows:
     name: Workflow lint
@@ -71,7 +87,8 @@ jobs:
       - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
         with:
           go-version-file: go.mod
-      - run: go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+      - name: Lint workflows with actionlint
+        run: go run github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
       - uses: zizmorcore/zizmor-action@45d7276c9ca790aabd705e31ca99c6185c3e76dd # v0.8.1
 
   release-dry-run:
