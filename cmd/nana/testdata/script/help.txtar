@@ -13,6 +13,7 @@ Usage:
 
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
+  dockerfile  Read facts from a Dockerfile
   help        Help about any command
   version     Print the version this binary was built from
 

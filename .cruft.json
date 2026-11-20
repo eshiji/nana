@@ -1,6 +1,6 @@
 {
   "template": "git@github.com:eshiji/cookiecutter-templates.git",
-  "commit": "2fc7d92c3cd7cb4675b1f383394d81e9e8da9413",
+  "commit": "bfa1a4eefcb1fc324c104f716c57a715bf42d7fc",
   "checkout": "main",
   "context": {
     "cookiecutter": {
@@ -20,7 +20,7 @@
         "go.sum"
       ],
       "_template": "git@github.com:eshiji/cookiecutter-templates.git",
-      "_commit": "2fc7d92c3cd7cb4675b1f383394d81e9e8da9413"
+      "_commit": "bfa1a4eefcb1fc324c104f716c57a715bf42d7fc"
     }
   },
   "directory": "go_cli",

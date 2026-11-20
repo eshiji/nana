@@ -9,37 +9,42 @@ import (
 	"github.com/spf13/pflag"
 )
 
+// commandRule is one requirement every command must meet. Adding a requirement means
+// adding one entry to commandRules.
+type commandRule struct {
+	name     string
+	violated func(cmd *cobra.Command) bool
+}
+
+var commandRules = []commandRule{
+	{"have a Short description", func(c *cobra.Command) bool { return blank(c.Short) }},
+	{"have a lowercase name", func(c *cobra.Command) bool { return c.Name() != strings.ToLower(c.Name()) }},
+	{"have an Example when runnable", func(c *cobra.Command) bool { return c.Runnable() && blank(c.Example) }},
+	{"describe every flag", hasUndescribedFlag},
+}
+
 // TestEveryCommandHonoursTheCLIContract walks the whole command tree, so every new
-// command is held to the same documentation standard without anyone adding a test.
+// command is held to the same standard without anyone adding a test.
 func TestEveryCommandHonoursTheCLIContract(t *testing.T) {
 	for _, cmd := range allCommands(NewRootCommand(io.Discard, io.Discard)) {
-		t.Run(cmd.CommandPath(), func(t *testing.T) {
-			assertDocumented(t, cmd)
-			assertFlagsDescribed(t, cmd)
-		})
-	}
-}
-
-func assertDocumented(t *testing.T, cmd *cobra.Command) {
-	t.Helper()
-	if strings.TrimSpace(cmd.Short) == "" {
-		t.Error("missing Short description")
-	}
-	if cmd.Name() != strings.ToLower(cmd.Name()) {
-		t.Errorf("command name %q must be lowercase", cmd.Name())
-	}
-	if cmd.Runnable() && strings.TrimSpace(cmd.Example) == "" {
-		t.Error("runnable command is missing an Example")
-	}
-}
-
-func assertFlagsDescribed(t *testing.T, cmd *cobra.Command) {
-	t.Helper()
-	cmd.LocalFlags().VisitAll(func(flag *pflag.Flag) {
-		if strings.TrimSpace(flag.Usage) == "" {
-			t.Errorf("flag --%s has no usage text", flag.Name)
+		for _, rule := range commandRules {
+			if rule.violated(cmd) {
+				t.Errorf("%s: must %s", cmd.CommandPath(), rule.name)
+			}
 		}
+	}
+}
+
+func blank(s string) bool {
+	return strings.TrimSpace(s) == ""
+}
+
+func hasUndescribedFlag(cmd *cobra.Command) bool {
+	undescribed := false
+	cmd.LocalFlags().VisitAll(func(flag *pflag.Flag) {
+		undescribed = undescribed || blank(flag.Usage)
 	})
+	return undescribed
 }
 
 func allCommands(cmd *cobra.Command) []*cobra.Command {
