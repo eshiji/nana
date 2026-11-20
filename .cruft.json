@@ -1,6 +1,6 @@
 {
   "template": "git@github.com:eshiji/cookiecutter-templates.git",
-  "commit": "bfa1a4eefcb1fc324c104f716c57a715bf42d7fc",
+  "commit": "1a36a6f3f16aa0f374aedad6c8a626cc204724eb",
   "checkout": "main",
   "context": {
     "cookiecutter": {
@@ -9,6 +9,7 @@
       "description": "Pipeline checks for container images and Terraform, the same on a laptop and in CI.",
       "author": "eshiji",
       "go_version": "1.26",
+      "go_toolchain": "1.26.11",
       "license": "Apache-2.0",
       "_cruft_skip": [
         "README.md",
@@ -20,7 +21,7 @@
         "go.sum"
       ],
       "_template": "git@github.com:eshiji/cookiecutter-templates.git",
-      "_commit": "bfa1a4eefcb1fc324c104f716c57a715bf42d7fc"
+      "_commit": "1a36a6f3f16aa0f374aedad6c8a626cc204724eb"
     }
   },
   "directory": "go_cli",
