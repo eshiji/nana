@@ -2,6 +2,8 @@ module github.com/eshiji/nana
 
 go 1.26.8
 
+toolchain go1.26.11
+
 require (
 	github.com/moby/buildkit v0.35.1
 	github.com/rogpeppe/go-internal v1.16.0
