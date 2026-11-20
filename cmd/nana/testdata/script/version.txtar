@@ -1,0 +1,8 @@
+# version prints something and writes nothing to stderr
+exec nana version
+stdout .
+! stderr .
+
+# an unknown command fails and says why
+! exec nana does-not-exist
+stderr 'unknown command'

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests",
+    ":semanticCommits"
+  ],
+  "minimumReleaseAge": "3 days",
+  "postUpdateOptions": ["gomodTidy"],
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "labels": ["security"]
+  },
+  "packageRules": [
+    {
+      "description": "Patch, digest and pin updates merge themselves once CI passes",
+      "matchUpdateTypes": ["patch", "digest", "pin", "pinDigest"],
+      "automerge": true
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Go tools run with `go run module/cmd/tool@version`",
+      "managerFilePatterns": ["/(^|/)Makefile$/", "/^\\.github/workflows/[^/]+\\.ya?ml$/"],
+      "matchStrings": ["(?<depName>[a-z0-9.-]+\\.[a-z]+/[^\\s@]+?)/cmd/[^\\s@]+@(?<currentValue>v[^\\s]+)"],
+      "datasourceTemplate": "go"
+    },
+    {
+      "customType": "regex",
+      "description": "Tool versions annotated with a renovate comment in workflows",
+      "managerFilePatterns": ["/^\\.github/workflows/[^/]+\\.ya?ml$/"],
+      "matchStrings": ["# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+[a-z-]*version: \"?(?<currentValue>v[^\\s\"]+)\"?"]
+    }
+  ]
+}

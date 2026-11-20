@@ -1,0 +1,63 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# Release artifacts: binaries, archives, checksums, SBOMs and a multi-arch image.
+# The GitHub release itself (notes, tag) is created by release-please.
+version: 2
+
+project_name: nana
+
+before:
+  hooks:
+    - go mod download
+
+builds:
+  - id: nana
+    main: ./cmd/nana
+    binary: nana
+    env:
+      - CGO_ENABLED=0
+    goos: [linux, darwin, windows]
+    goarch: [amd64, arm64]
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X github.com/eshiji/nana/internal/buildinfo.version=v{{ .Version }}
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+archives:
+  - formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: checksums.txt
+
+sboms:
+  - artifacts: archive
+
+dockers_v2:
+  - id: image
+    ids: [nana]
+    images:
+      - ghcr.io/eshiji/nana
+    tags:
+      - "{{ .Version }}"
+    platforms:
+      - linux/amd64
+      - linux/arm64
+    labels:
+      org.opencontainers.image.source: https://github.com/eshiji/nana
+      org.opencontainers.image.description: "Pipeline checks for container images and Terraform, the same on a laptop and in CI."
+      org.opencontainers.image.licenses: Apache-2.0
+      org.opencontainers.image.version: "{{ .Version }}"
+      org.opencontainers.image.revision: "{{ .FullCommit }}"
+
+changelog:
+  disable: true # release-please writes CHANGELOG.md and the release notes
+
+release:
+  github:
+    owner: eshiji
+    name: nana
+  mode: keep-existing # attach assets to the release created by release-please

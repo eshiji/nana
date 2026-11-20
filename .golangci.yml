@@ -1,0 +1,22 @@
+version: "2"
+
+linters:
+  default: standard
+  enable:
+    - errorlint
+    - gocyclo
+    - gosec
+    - misspell
+    - revive
+  settings:
+    gocyclo:
+      min-complexity: 10
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/eshiji/nana
