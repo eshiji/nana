@@ -1,0 +1,61 @@
+# the default output is a table read from ./Dockerfile
+exec nana dockerfile args
+cmp stdout want-table.txt
+! stderr .
+
+# json output for scripts and tests, from an explicit file
+exec nana dockerfile args --file Dockerfile -o json
+cmp stdout want.json
+! stderr .
+
+# a missing file is a usage error with a clear message
+! exec nana dockerfile args --file missing/Dockerfile
+stderr 'missing/Dockerfile'
+! stdout .
+
+# an unknown output format is rejected
+! exec nana dockerfile args -o yaml
+stderr 'unsupported output format "yaml"'
+
+-- Dockerfile --
+ARG BASE_TAG=1.0
+FROM example.com/base:${BASE_TAG} AS build
+ARG TARGETOS TARGETARCH
+ARG EXAMPLE_VERSION="1.2.3"
+-- want-table.txt --
+NAME             DEFAULT  STAGE  LINE
+BASE_TAG         1.0             1
+TARGETOS         -        build  3
+TARGETARCH       -        build  3
+EXAMPLE_VERSION  1.2.3    build  4
+-- want.json --
+[
+  {
+    "name": "BASE_TAG",
+    "default": "1.0",
+    "has_default": true,
+    "stage": "",
+    "line": 1
+  },
+  {
+    "name": "TARGETOS",
+    "default": "",
+    "has_default": false,
+    "stage": "build",
+    "line": 3
+  },
+  {
+    "name": "TARGETARCH",
+    "default": "",
+    "has_default": false,
+    "stage": "build",
+    "line": 3
+  },
+  {
+    "name": "EXAMPLE_VERSION",
+    "default": "1.2.3",
+    "has_default": true,
+    "stage": "build",
+    "line": 4
+  }
+]
